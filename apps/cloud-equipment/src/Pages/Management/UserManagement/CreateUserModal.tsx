@@ -1,6 +1,8 @@
 import { useState } from 'react';
+
 import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import dayjs from 'dayjs';
 
 import { UserTypeEnum } from '@cloud-equipment/models';
 import { IAppState } from '../../../Store/store';
@@ -41,6 +43,8 @@ export const CreateUserModal = ({ onClose }: any) => {
   const onSubmit = () => {
     setActiveModal('confirmCreateUser');
   };
+
+  const today = dayjs();
 
   return (
     <>
@@ -93,6 +97,7 @@ export const CreateUserModal = ({ onClose }: any) => {
                     onAccept={onChange}
                     value={value}
                     inputRef={ref}
+                    maxDate={today}
                   />
                 )}
               />

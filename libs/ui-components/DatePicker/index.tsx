@@ -8,12 +8,14 @@ interface IDatePickerProps extends DatePickerProps<Dayjs | any> {
   label: string | React.ReactElement;
   containerClass?: string;
   className?: string;
+  maxDate?: any;
 }
 
 const DatePickerComponent: React.FC<IDatePickerProps> = ({
   label,
   className,
   containerClass,
+  maxDate,
   ...rest
 }) => {
   return (
@@ -33,6 +35,7 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
           className
         )}
         format="DD/MM/YYYY"
+        maxDate={maxDate}
         {...rest}
       />
     </div>
