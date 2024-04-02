@@ -216,7 +216,13 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
         facilityId: userDetails?.FACILITY_ID as string,
         isActive: false,
       };
-      mutateFn_CreatePatient(data, (res) => {
+      const formData = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      mutateFn_CreatePatient(formData, (res) => {
         if (res.data?.patientUniqueID) {
           setExistingPatientId(res.data.patientUniqueID);
           createAppointment(res.data.patientUniqueID, existingRefererId);
@@ -260,7 +266,14 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
             facilityId: userDetails?.FACILITY_ID as string,
             isActive: false,
           };
-          mutateFn_CreatePatient(data, (res2) => {
+
+          const formData = new FormData();
+
+          Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value as string);
+          });
+
+          mutateFn_CreatePatient(formData, (res2) => {
             if (res2.data?.patientUniqueID) {
               setExistingPatientId(res2.data.patientUniqueID);
               createAppointment(res2.data.patientUniqueID, res?.data?.doctorId);
@@ -484,16 +497,52 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                   <Select
                     options={[
                       {
-                        value: 'A',
-                        label: 'A',
-                        categoryId: 'A',
-                        categoryName: 'A',
+                        value: 'A+',
+                        label: 'A+',
+                        categoryId: 'A+',
+                        categoryName: 'A+',
                       },
                       {
-                        value: 'AB',
-                        label: 'AB',
-                        categoryId: 'AB',
-                        categoryName: 'AB',
+                        value: 'A-',
+                        label: 'A-',
+                        categoryId: 'A-',
+                        categoryName: 'A-',
+                      },
+                      {
+                        value: 'B+',
+                        label: 'B+',
+                        categoryId: 'B+',
+                        categoryName: 'B+',
+                      },
+                      {
+                        value: 'B-',
+                        label: 'B-',
+                        categoryId: 'B-',
+                        categoryName: 'B-',
+                      },
+                      {
+                        value: 'O+',
+                        label: 'O+',
+                        categoryId: 'O+',
+                        categoryName: 'O+',
+                      },
+                      {
+                        value: 'O-',
+                        label: 'O-',
+                        categoryId: 'O-',
+                        categoryName: 'O-',
+                      },
+                      {
+                        value: 'AB+',
+                        label: 'AB+',
+                        categoryId: 'AB+',
+                        categoryName: 'AB+',
+                      },
+                      {
+                        value: 'AB-',
+                        label: 'AB-',
+                        categoryId: 'AB-',
+                        categoryName: 'AB-',
                       },
                     ]}
                     label="Patient Blood Group"
@@ -530,13 +579,13 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                         control={
                           <Radio readOnly={!!existingPatientId} value={true} />
                         }
-                        label="True"
+                        label="Yes"
                       />
                       <FormControlLabel
                         control={
                           <Radio readOnly={!!existingPatientId} value={false} />
                         }
-                        label="False"
+                        label="No"
                       />
                     </RadioGroup>
                   )}
@@ -545,13 +594,13 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateTimePicker
-                  label="Appointment Date"
+                  label="Appointment Date and Time"
                   value={appointmentDate}
                   minDateTime={dayjs()}
                   onChange={(newValue) => {
                     setAppointmentDate(newValue);
                   }}
-                />{' '}
+                />
               </LocalizationProvider>
 
               {/* Rebates Section */}
