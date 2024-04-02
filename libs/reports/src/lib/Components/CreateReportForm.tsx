@@ -313,7 +313,14 @@ const CreateReportForm = () => {
         facilityId: facilityId,
         isActive: false,
       };
-      mutateFn_CreatePatient(data, (res) => {
+
+      const formData = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value as string);
+      });
+
+      mutateFn_CreatePatient(formData, (res) => {
         if (res.data?.patientUniqueID) {
           setExistingPatientId(res.data.patientUniqueID);
           createReport(res.data.patientUniqueID, existingRefererId);
@@ -357,7 +364,14 @@ const CreateReportForm = () => {
             facilityId: facilityId,
             isActive: false,
           };
-          mutateFn_CreatePatient(data, (res2) => {
+
+          const formData = new FormData();
+
+          Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value as string);
+          });
+
+          mutateFn_CreatePatient(formData, (res2) => {
             if (res2.data?.patientUniqueID) {
               setExistingPatientId(res2.data.patientUniqueID);
               createReport(res2.data.patientUniqueID, res?.data?.doctorId);
