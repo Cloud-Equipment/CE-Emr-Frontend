@@ -8,4 +8,6 @@ export interface ISettings {
   roles: string[];
   emailConfirmed: boolean;
   phoneNumberConfirmed: boolean;
+  emailVerificatioEnabled: boolean;
+  phoneVerificationEnabled: boolean;
 }

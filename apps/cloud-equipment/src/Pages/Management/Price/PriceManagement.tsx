@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import {
   ListItemIcon,
   ListItemText,
@@ -6,12 +8,9 @@ import {
   Modal,
   TablePagination,
 } from '@mui/material';
-import { IMedservice } from '@cloud-equipment/models';
+import { IMedservice, IProcedureCategory } from '@cloud-equipment/models';
 import { _getPrices } from '../../../services/procedures.service';
-import React, { useEffect, useState } from 'react';
 import * as Assets from '@cloud-equipment/assets';
-import moment from 'moment';
-import numeral from 'numeral';
 import medserviceQueries from '../../../services/queries/medservices';
 import { NavTab, Table } from '@cloud-equipment/ui-components';
 import NewProcedureModal from './modals/NewProcedureModal';
@@ -20,15 +19,20 @@ import ApprovePriceModal from './modals/ApprovePriceModal';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useSelector } from 'react-redux';
 import { IAppState } from '../../../Store/store';
+import { formatDate } from '@cloud-equipment/utils';
 
 type TableColumns = { [key: string]: string };
 
 const columnHelper = createColumnHelper<TableColumns>();
 
-const columns = [
+const columns = (
+  ProcedureMapping: () => {
+    [key: string]: IProcedureCategory;
+  }
+) => [
   columnHelper.accessor('dateCreated', {
     header: 'Date & Time Added',
-    cell: (info) => info.getValue(),
+    cell: (info) => formatDate(info.getValue()),
   }),
   columnHelper.accessor('medServiceName', {
     header: 'Procedure Name',
@@ -36,7 +40,10 @@ const columns = [
   }),
   columnHelper.accessor('medServiceCategoryId', {
     header: 'Procedure Category',
-    cell: (info) => info.getValue(),
+    cell: (info) => {
+      const category = ProcedureMapping();
+      return category[info.getValue()]?.categoryName;
+    },
   }),
   columnHelper.accessor('price', {
     header: 'Price',
@@ -56,7 +63,8 @@ const PriceManagement = () => {
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  const { useGetMedservicesForFacility } = medserviceQueries;
+  const { useGetMedservicesForFacility, useGetMedServicesProcedureCategories } =
+    medserviceQueries;
   const { data: paginatedResponse, isLoading } = useGetMedservicesForFacility({
     facilityId: userDetails?.FACILITY_ID as string,
     download: false,
@@ -64,7 +72,22 @@ const PriceManagement = () => {
     startIndex: 0,
     pageSize,
   });
+  const {
+    data: procedureCategoriesData,
+    isLoading: procedureCategoriesLoading,
+  } = useGetMedServicesProcedureCategories(
+    '/service-manager/medServiceCategory/getallcategory'
+  );
 
+  const ProcedureMapping = () => {
+    const procedureMapping: { [key: string]: IProcedureCategory } = {};
+    if (procedureCategoriesData) {
+      (procedureCategoriesData ?? []).forEach((data) => {
+        procedureMapping[`${data?.categoryId}`] = data;
+      });
+    }
+    return procedureMapping;
+  };
   //   menu
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedProcedure, setSelectedProcedure] =
@@ -108,7 +131,7 @@ const PriceManagement = () => {
     handleMenuClose();
     setDeleteMOdalOpen(true);
   };
-  
+
   const handleApproveClick = () => {
     handleMenuClose();
     setApproveMOdalOpen(true);
@@ -197,9 +220,9 @@ const PriceManagement = () => {
           /> */}
 
           <Table
-            loading={false}
+            loading={isLoading}
             data={paginatedResponse?.resultItem ?? []}
-            columns={columns}
+            columns={columns(ProcedureMapping)}
             tableHeading="All Procedures"
           />
         </div>

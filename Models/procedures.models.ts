@@ -120,3 +120,12 @@ export interface ICreateProcedure {
   price: number;
   facilityId: string;
 }
+
+export interface IProcedureCategory {
+  categoryId: string;
+  categoryName: string;
+  categoryDescription?: any;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+}

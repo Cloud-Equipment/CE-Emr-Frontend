@@ -9,7 +9,7 @@ import {
 import { apiClient } from '@cloud-equipment/api';
 import { ApiResponse, PaginationData } from 'Models/api.models';
 import keys from './keys';
-import { IMedservice } from '@cloud-equipment/models';
+import { IMedservice, IProcedureCategory } from '@cloud-equipment/models';
 import { environment } from '@cloud-equipment/environments';
 
 // url: `/service-manager/medServices/getall`
@@ -86,9 +86,35 @@ const useGetMedservicesForFacility = (
   return { isLoading, data, isSuccess, error };
 };
 
+// /service-manager/medServiceCategory/getallcategory
+const useGetMedServicesProcedureCategories = (
+  url: string,
+  options: Omit<
+    UseQueryOptions<any, unknown, any, string[]>,
+    'initialData' | 'queryFn' | 'queryKey'
+  > = {}
+) => {
+  const hash = [keys.readOne];
+  const {
+    isLoading,
+    data,
+    isSuccess,
+    error,
+  }: UseQueryResult<IProcedureCategory[], unknown> = useQuery({
+    queryKey: hash,
+    queryFn: () =>
+      apiClient
+        .get({ url })
+        .then((res: ApiResponse<IProcedureCategory[]>) => res.data),
+    ...options,
+  });
+  return { isLoading, data, isSuccess, error };
+};
+
 const queries = {
   useGetMedservicesForFacility,
   useGetPrices,
+  useGetMedServicesProcedureCategories,
 };
 
 export default queries;
