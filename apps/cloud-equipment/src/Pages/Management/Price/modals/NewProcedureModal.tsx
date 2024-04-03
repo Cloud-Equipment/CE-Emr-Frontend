@@ -1,21 +1,36 @@
+import React, { useEffect, useState } from 'react';
+
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import { MenuItem } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+
 import {
   _createPrice,
   _getAllFacilities,
   _getMedserviceCategories,
 } from '../../../../services/procedures.service';
-import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { MenuItem, Select } from '@mui/material';
 import {
   ICreateProcedure,
   IMedservice,
   IMedserviceCategory,
   IUser,
 } from '@cloud-equipment/models';
-import { useDispatch, useSelector } from 'react-redux';
 import { clearLoading, setLoading } from '@cloud-equipment/shared_store';
 import * as Assets from '@cloud-equipment/assets';
+import {
+  Button,
+  Input,
+  PhoneInputField,
+  Select,
+  DatePicker,
+} from '@cloud-equipment/ui-components';
+
+interface FormProps {
+  medServiceCategoryId: number;
+  medServiceName: string;
+  price: number;
+}
 
 const NewProcedureModal = ({
   onClose,
@@ -24,7 +39,14 @@ const NewProcedureModal = ({
   onClose: () => void;
   procedureToEdit: IMedservice | null;
 }) => {
-  const { register, handleSubmit, control, getValues, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<FormProps>();
   const dispatch = useDispatch();
   const [view, setView] = useState<'form' | 'confirm'>('form');
 
@@ -82,52 +104,50 @@ const NewProcedureModal = ({
       setValue('price', procedureToEdit.price);
     }
   }, []);
-
   return (
     <div className="bg-white p-10 lg:p-14 centered-modal">
       {view === 'form' ? (
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5">
           <h4>Add New Price/Procedure</h4>
 
-          <div className="form-input-label-holder">
-            <label className="px-5">Medservice Category</label>
-            <Controller
-              name="medServiceCategoryId"
-              control={control}
-              defaultValue={0}
-              render={({ field }) => (
-                <Select {...field}>
-                  <MenuItem value={0} disabled>
-                    Choose Category
-                  </MenuItem>
-                  {categoriesList.map((x, i) => (
-                    <MenuItem key={i} value={x.categoryId}>
-                      {x.categoryName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-          </div>
+          <Controller
+            name="medServiceCategoryId"
+            control={control}
+            // defaultValue={0}
+            rules={{ required: 'Category is required' }}
+            render={({ field }) => (
+              <Select
+                options={categoriesList.map((x, i) => ({
+                  ...x,
+                  value: x.categoryId,
+                  label: x.categoryName,
+                }))}
+                label="Medservice Category"
+                placeholder="Choose Category"
+                containerClass="flex-1"
+                error={errors?.medServiceCategoryId}
+                {...{ field }}
+              />
+            )}
+          />
 
-          <div className="auth-input-label-holder">
-            <label className="px-5">Medservice Name</label>
-            <input
-              {...register('medServiceName')}
-              placeholder="Enter Test / Diagnostic"
-              className="ce-input"
-            />
-          </div>
+          <Input
+            label="Medservice Name"
+            placeholder="Enter Test / Diagnostic"
+            {...register('medServiceName', {
+              required: 'Med Service Name is required ',
+            })}
+            error={errors?.medServiceName}
+          />
 
-          <div className="auth-input-label-holder">
-            <label className="px-5">Test/Diagnostic Price</label>
-            <input
-              {...register('price')}
-              placeholder="Enter Test / Diagnostic"
-              className="ce-input"
-              type="number"
-            />
-          </div>
+          <Input
+            label="Test/Diagnostic Price"
+            placeholder="Enter Test / Diagnostic"
+            {...register('price', {
+              required: 'Price is required ',
+            })}
+            error={errors?.price}
+          />
 
           <button className="ce-btn !bg-greenText mt-3 py-3">
             {procedureToEdit ? 'Update Procedure' : 'Add Price/ Procedure '}

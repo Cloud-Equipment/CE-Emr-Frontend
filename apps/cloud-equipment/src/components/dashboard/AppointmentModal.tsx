@@ -427,6 +427,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 label="Patient Mobile Number"
                 name="patientNumber"
                 readonly={!!existingPatientId}
+                containerClass="h-[72px]"
               />
 
               <Input
@@ -718,6 +719,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                     control={control}
                     label="Referer Phone Number"
                     name="refererPhone"
+                    containerClass="h-[72px]"
                   />{' '}
                 </>
               ) : null}

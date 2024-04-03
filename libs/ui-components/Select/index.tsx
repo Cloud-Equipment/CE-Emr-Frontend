@@ -1,4 +1,8 @@
-import { ControllerRenderProps, FieldValues } from 'react-hook-form';
+import {
+  ControllerRenderProps,
+  FieldValues,
+  FieldError,
+} from 'react-hook-form';
 import cx from 'classnames';
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
@@ -8,8 +12,10 @@ interface SelectProps<T extends string>
   containerClass?: string;
   options?: { [key: string]: string }[];
   field?: ControllerRenderProps<FieldValues, T>;
+  error?: FieldError;
 }
 
+// TODO: fix the validation issue, it does not show because of the errors
 const SelectDropdown: React.FC<any> = <T extends string>({
   className,
   label,
@@ -19,6 +25,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
   field,
   placeholder,
   disabled,
+  error,
 }: SelectProps<T>) => {
   return (
     <div
@@ -40,7 +47,8 @@ const SelectDropdown: React.FC<any> = <T extends string>({
       <Select
         className={cx(
           'py-2.5 pr-2 pl-3 rounded-lg focus:outline-none w-full h-12 border',
-          className
+          className,
+          { 'outline-red-500 border border-red-500': !!error }
         )}
         inputProps={{ 'aria-label': 'Without label' }}
         disabled={disabled}
@@ -56,6 +64,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
           </MenuItem>
         ))}
       </Select>
+      {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
     </div>
   );
 };
