@@ -29,14 +29,12 @@ const Security = () => {
     defaultValues: useMemo(() => {
       return {
         id: data?.id,
-        firstName: data?.firstName,
-        lastName: data?.lastName,
-        twoFactorEnabled: data?.twoFactorEnabled || false,
-        phoneNumber: data?.phoneNumber,
-        email: data?.email,
+        emailVerificatioEnabled: data?.emailVerificatioEnabled,
+        phoneVerificationEnabled: data?.phoneVerificationEnabled,
       };
     }, [data]),
   });
+
   return (
     <div className="py-10">
       <h3 className="font-manrope text-lg font-semibold leading-[22px] text-secondary-300 mb-3">
@@ -49,7 +47,13 @@ const Security = () => {
 
       <div className="flex justify-between mb-8">
         <div className="w-2/12">
-          <Switch className="" checked={false} onChange={() => {}} />
+          <Controller
+            name="phoneVerificationEnabled"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Switch checked={value} onChange={onChange} />
+            )}
+          />
         </div>
         <div className="w-8/12 flex flex-col gap-2">
           <h4 className="font-manrope text-base font-semibold leading-[19px] text-secondary-300">
@@ -68,7 +72,13 @@ const Security = () => {
       </div>
       <div className="flex justify-between">
         <div className="w-2/12">
-          <Switch className="" checked={false} onChange={() => {}} />
+          <Controller
+            name="emailVerificatioEnabled"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Switch checked={value} onChange={onChange} />
+            )}
+          />
         </div>
         <div className="w-8/12 flex flex-col gap-2">
           <h4 className="font-manrope text-base font-semibold leading-[19px] text-secondary-300">
