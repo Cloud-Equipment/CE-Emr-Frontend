@@ -80,7 +80,7 @@ const GeneralSettings = () => {
         <div className="mt-4 2xl:mt-6 grid gap-5 2xl:gap-7 md:grid-cols-2">
           <Input
             className="active:border-primary-100 focus:outline-primary-100"
-            label="First Name"
+            label="First Name *"
             containerClass="flex-1"
             error={errors.firstName}
             {...register('firstName', {
@@ -89,7 +89,7 @@ const GeneralSettings = () => {
           />
           <Input
             className="active:border-primary-100 focus:outline-primary-100"
-            label="Last Name"
+            label="Last Name *"
             containerClass="flex-1"
             error={errors.lastName}
             {...register('lastName', {
@@ -98,7 +98,7 @@ const GeneralSettings = () => {
           />
           <Input
             className="active:border-primary-100 focus:outline-primary-100"
-            label="Phone Number"
+            label="Phone Number *"
             containerClass="flex-1"
             error={errors.phoneNumber}
             {...register('phoneNumber', {
@@ -107,7 +107,7 @@ const GeneralSettings = () => {
           />
           <Input
             className="active:border-primary-100 focus:outline-primary-100"
-            label="Email Address"
+            label="Email Address *"
             containerClass="flex-1"
             disabled
             {...register('email', {

@@ -124,7 +124,7 @@ const NewProcedureModal = ({
                   value: x.categoryId,
                   label: x.categoryName,
                 }))}
-                label="Medservice Category"
+                label="Medservice Category *"
                 placeholder="Choose Category"
                 containerClass="flex-1"
                 error={errors?.medServiceCategoryId}
@@ -134,7 +134,7 @@ const NewProcedureModal = ({
           />
 
           <Input
-            label="Medservice Name"
+            label="Medservice Name *"
             placeholder="Enter Test / Diagnostic"
             {...register('medServiceName', {
               required: 'Med Service Name is required ',
@@ -143,7 +143,7 @@ const NewProcedureModal = ({
           />
 
           <Input
-            label="Test/Diagnostic Price"
+            label="Test/Diagnostic Price *"
             placeholder="Enter Test / Diagnostic"
             {...register('price', {
               required: 'Price is required ',

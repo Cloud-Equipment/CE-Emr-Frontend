@@ -82,26 +82,26 @@ export const EditUserModal = ({ onClose, data }: any) => {
 
             <div className="flex flex-col gap-5">
               <Input
-                label="First Name"
+                label="First Name *"
                 placeholder="Enter First Name"
                 className="ce-input"
                 {...register('firstName')}
               />
               <Input
-                label="Last Name"
+                label="Last Name *"
                 placeholder="Enter Last Name"
                 className="ce-input"
                 {...register('lastName')}
               />
               <Input
-                label="Email"
+                label="Email *"
                 placeholder="Enter Email Address"
                 className="ce-input"
                 {...register('email')}
               />
               <PhoneInputField
                 control={control}
-                label="Phone Number"
+                label="Phone Number *"
                 name="phoneNumber"
                 containerClass="h-[74px]"
               />
@@ -112,7 +112,7 @@ export const EditUserModal = ({ onClose, data }: any) => {
                 // rules={{ required: 'Date of Hire is required' }}
                 render={({ field: { onChange, value, ref } }) => (
                   <DatePicker
-                    label="Registration Date"
+                    label="Registration Date *"
                     containerClass="flex-1"
                     onChange={onChange}
                     onAccept={onChange}
@@ -142,7 +142,7 @@ export const EditUserModal = ({ onClose, data }: any) => {
                         categoryName: 'Receptionist',
                       },
                     ]}
-                    label="Role"
+                    label="Role *"
                     placeholder="Select Role"
                     containerClass="flex-1"
                     disabled={true}

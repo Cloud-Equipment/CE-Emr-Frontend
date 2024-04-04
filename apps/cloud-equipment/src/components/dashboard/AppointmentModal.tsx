@@ -426,7 +426,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
             >
               <SearchableInput
                 options={patientsFound ?? []}
-                label="Patient Name"
+                label="Patient Name *"
                 onInputChange={(newValue) => setPatientName(newValue)}
                 inputValue={patientName}
                 onOptionSelect={(option) =>
@@ -437,14 +437,14 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
 
               <PhoneInputField
                 control={control}
-                label="Patient Mobile Number"
+                label="Patient Mobile Number *"
                 name="patientNumber"
                 readonly={!!existingPatientId}
                 containerClass="h-[72px]"
               />
 
               <Input
-                label="Email Address"
+                label="Email Address *"
                 placeholder="adepoju@cloud.io"
                 readOnly={!!existingPatientId}
                 {...register('patientEmail')}
@@ -457,7 +457,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 render={({ field }) => (
                   <Select
                     options={Gender}
-                    label="Gender"
+                    label="Gender *"
                     placeholder="Select Gender"
                     containerClass="flex-1"
                     {...{ field }}
@@ -466,7 +466,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               />
 
               <Input
-                label="Age of the Patient"
+                label="Age of the Patient *"
                 placeholder="15"
                 type="number"
                 readOnly={!!existingPatientId}
@@ -482,7 +482,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 render={({ field }) => (
                   <Select
                     options={MaritalStatus}
-                    label="Marital Status"
+                    label="Marital Status *"
                     placeholder="Select Marital Status"
                     {...{ field }}
                   />
@@ -490,7 +490,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               />
 
               <MultiSelectWithCheckbox
-                label="Procedures"
+                label="Procedures *"
                 options={
                   proceduresList?.resultItem?.map((x) => ({
                     id: x.medServiceId.toString(),
@@ -559,7 +559,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                         categoryName: 'AB-',
                       },
                     ]}
-                    label="Patient Blood Group"
+                    label="Patient Blood Group  *"
                     placeholder="Select Blood Group"
                     containerClass="flex-1"
                     {...{ field }}
@@ -568,21 +568,21 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               />
 
               <Input
-                label="Blood Pressure"
+                label="Blood Pressure *"
                 placeholder="80/120"
                 readOnly={!!existingPatientId}
                 {...register('bloodPressure', {})}
               />
 
               <Input
-                label="Pulse"
+                label="Pulse *"
                 placeholder="80/120"
                 readOnly={!!existingPatientId}
                 {...register('pulse', {})}
               />
 
               <div className="md:col-span-2">
-                <p>Taking any medications currently?</p>
+                <p>Taking any medications currently? *</p>
 
                 <Controller
                   name="takingMeds"
@@ -606,6 +606,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 />
               </div>
 
+              {/* REFACTOR: This is redundant, the provider already exists */}
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateTimePicker
                   label="Appointment Date and Time"
@@ -631,7 +632,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                   className="md:col-span-2 grid mt-6 md:grid-cols-2 gap-5 md:gap-8"
                 >
                   <div className="form-input-label-holder">
-                    <label>Procedure for Rebate</label>
+                    <label>Procedure for Rebate *</label>
                     <MatSelect
                       value={proceduresWithRebate[index]}
                       onChange={handleRebateSelectionFromDropdown}
@@ -655,7 +656,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
 
                   <div className="flex gap-3 items-center">
                     <div className="form-input-label-holder">
-                      <label>Rebate Amount</label>
+                      <label>Rebate Amount *</label>
                       <input
                         className="ce-input"
                         value={

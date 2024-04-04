@@ -497,7 +497,7 @@ const CreateReportForm = () => {
         <div className="grid md:grid-cols-2 gap-5 md:gap-8 mt-8 md:mt-10">
           <SearchableInput
             options={patientsFound ?? []}
-            label="Patient Name"
+            label="Patient Name *"
             onInputChange={(newValue) => setPatientName(newValue)}
             inputValue={patientName}
             onOptionSelect={(option) => handleSelectedPatientFromSearch(option)}
@@ -506,7 +506,7 @@ const CreateReportForm = () => {
 
           <PhoneInputField
             control={control}
-            label="Patient Mobile Number"
+            label="Patient Mobile Number *"
             name="patientPhone"
             containerClass="h-[70px]"
           />
@@ -518,7 +518,7 @@ const CreateReportForm = () => {
             render={({ field }) => (
               <Select
                 options={Gender}
-                label="Gender"
+                label="Gender *"
                 placeholder="Select Gender"
                 containerClass="flex-1"
                 {...{ field }}
@@ -527,13 +527,13 @@ const CreateReportForm = () => {
           />
 
           <Input
-            label="Age of the Patient"
+            label="Age of the Patient *"
             {...register('patientAge', { required: 'Patient age is required' })}
             type="number"
           />
 
           <Input
-            label="Patient Email"
+            label="Patient Email *"
             placeholder="patient@cloudequipment.io"
             {...register('patientEmail', {
               required: 'Patient email is required',
@@ -542,7 +542,7 @@ const CreateReportForm = () => {
           />
 
           <Input
-            label="Patient Address"
+            label="Patient Address *"
             placeholder="No 24, W. F. Kumuyi Street,"
             {...register('patientAddress', {
               required: 'Patient address is required',
@@ -550,7 +550,7 @@ const CreateReportForm = () => {
           />
 
           <MultiSelectWithCheckbox
-            label="Procedures"
+            label="Procedures *"
             options={
               proceduresList?.resultItem?.map((x: any) => ({
                 id: x.medServiceId.toString(),
@@ -570,7 +570,7 @@ const CreateReportForm = () => {
             render={({ field }) => (
               <Select
                 options={MaritalStatus}
-                label="Marital Status"
+                label="Marital Status *"
                 placeholder="Select Marital Status"
                 {...{ field }}
               />
@@ -591,7 +591,7 @@ const CreateReportForm = () => {
             className=" grid mt-6 md:grid-cols-2 gap-5 md:gap-8"
           >
             <div className="form-input-label-holder">
-              <label>Procedure for Rebate</label>
+              <label>Procedure for Rebate *</label>
               <MatSelect
                 value={proceduresWithRebate[index]}
                 onChange={handleRebateSelectionFromDropdown}
@@ -615,7 +615,7 @@ const CreateReportForm = () => {
 
             <div className="flex gap-3 items-center">
               <div className="form-input-label-holder">
-                <label>Rebate Amount</label>
+                <label>Rebate Amount *</label>
                 <input
                   className="ce-input"
                   value={

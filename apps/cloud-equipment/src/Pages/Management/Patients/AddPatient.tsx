@@ -213,21 +213,21 @@ const NewPatient = () => {
                 />
               </div>
               <Input
-                label="Patient First Name"
+                label="Patient First Name *"
                 {...register('firstName', {
                   required: 'Patient First Name is required ',
                 })}
                 error={errors?.firstName}
               />
               <Input
-                label="Patient Last Name"
+                label="Patient Last Name *"
                 {...register('lastName', {
                   required: 'Patient Last Name is required ',
                 })}
                 error={errors?.lastName}
               />
               <Input
-                label="Email Address"
+                label="Email Address *"
                 {...register('patientEmail', {
                   required: 'Email Address is required ',
                 })}
@@ -241,7 +241,7 @@ const NewPatient = () => {
               /> */}
               <PhoneInputField
                 control={control}
-                label="Mobile Number"
+                label="Mobile Number *"
                 name="patientPhone"
                 containerClass="h-[74px]"
                 error={errors?.patientPhone}
@@ -253,7 +253,7 @@ const NewPatient = () => {
                 render={({ field }) => (
                   <Select
                     options={Gender}
-                    label="Gender"
+                    label="Gender *"
                     placeholder="Select Gender"
                     containerClass="flex-1"
                     {...{ field }}
@@ -265,7 +265,7 @@ const NewPatient = () => {
                 control={control}
                 render={({ field: { onChange, value, ref } }) => (
                   <DatePicker
-                    label="Date of Birth"
+                    label="Date of Birth *"
                     containerClass="flex-1"
                     onChange={onChange}
                     onAccept={onChange}
@@ -275,7 +275,7 @@ const NewPatient = () => {
                 )}
               />
               <Input
-                label="Age"
+                label="Age *"
                 disabled
                 placeholder="19 years"
                 {...register('patientAge', {
@@ -291,7 +291,7 @@ const NewPatient = () => {
                 render={({ field }) => (
                   <Select
                     options={MaritalStatus}
-                    label="Marital Status"
+                    label="Marital Status *"
                     placeholder="Select Marital Status"
                     {...{ field }}
                   />
@@ -299,7 +299,7 @@ const NewPatient = () => {
               />
 
               <Input
-                label="Address"
+                label="Address *"
                 containerClass="md:col-span-2"
                 placeholder="No 24, W. F. Kumuyi Street,"
                 {...register('address', {
@@ -314,7 +314,7 @@ const NewPatient = () => {
                 render={({ field }) => (
                   <Select
                     options={PaymentMethod}
-                    label="Payment Type"
+                    label="Payment Type *"
                     placeholder="Select Payment Type"
                     {...{ field }}
                   />
@@ -330,21 +330,21 @@ const NewPatient = () => {
               </div>
 
               <Input
-                label="First Name"
+                label="First Name *"
                 {...register('emergencyContactFirstname', {
                   required: 'Emergency First Name is required ',
                 })}
                 error={errors?.emergencyContactFirstname}
               />
               <Input
-                label="Last Name"
+                label="Last Name *"
                 {...register('emergencyContactLastName', {
                   required: 'Emergency Last Name is required ',
                 })}
                 error={errors?.emergencyContactLastName}
               />
               <Input
-                label="Contact Number"
+                label="Contact Number *"
                 {...register('emergencyContactNumber', {
                   required: 'Emergency Contact Number is required ',
                 })}
@@ -357,7 +357,7 @@ const NewPatient = () => {
                 render={({ field }) => (
                   <Select
                     options={Relationship}
-                    label="Relationship"
+                    label="Relationship *"
                     placeholder="Select Relationship"
                     {...{ field }}
                   />
@@ -368,7 +368,7 @@ const NewPatient = () => {
               when other is selected */}
               {watch('emergencyContactRelationship') === 'other' && (
                 <Input
-                  label="Relationship with Next of Kin"
+                  label="Relationship with Next of Kin *"
                   {...register('emergencyContactRelationshipManual', {
                     required: 'Emergency Contact Relationship is required ',
                   })}
