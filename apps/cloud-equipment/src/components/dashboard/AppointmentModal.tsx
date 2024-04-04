@@ -37,6 +37,8 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { Gender, MaritalStatus } from '../../constants';
 import numeral from 'numeral';
+import { environment } from '@cloud-equipment/environments';
+import { useFilters } from '@cloud-equipment/hooks';
 
 const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
   const userDetails = useSelector((state: IAppState) => state.auth.user);
@@ -102,13 +104,24 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
   const { mutateFn: mutateFn_CreateAppointment } = useCreateAppointment();
 
   const { useGetMedservicesForFacility } = medserviceQueries;
-  const { data: proceduresList, isLoading } = useGetMedservicesForFacility({
-    facilityId: userDetails?.FACILITY_ID as string,
-    download: false,
-    currentPage: 1,
-    startIndex: 0,
-    pageSize: 1000,
-  });
+  const {
+    url,
+    // filters: { currentPage, pageSize },
+    // setFilters,
+  } = useFilters(
+    environment.baseUrl,
+    '/service-manager/medServices/getallbyfacilitypaged'
+  );
+  const { data: proceduresList, isLoading } = useGetMedservicesForFacility(
+    `${url}`,
+    {
+      facilityId: userDetails?.FACILITY_ID as string,
+      download: false,
+      currentPage: 1,
+      startIndex: 0,
+      pageSize: 1000,
+    }
+  );
 
   const [createPromptIsOpen, setCreatePromptIsOpen] = useState(false);
 
@@ -606,7 +619,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
 
               {/* Rebates Section */}
               <div className="md:col-span-2 border-b-[2px] pb-1 mt-6 md:mt-10 border-b-solid border-borderLine">
-                <h4 className="font-bold text-xl">Rebate</h4>
+                <h4 className="font-bold text-xl">Referral</h4>
                 <p className="text-sm text-greyText2 mt-1">
                   Click the add button to add rebate to various procedures
                 </p>

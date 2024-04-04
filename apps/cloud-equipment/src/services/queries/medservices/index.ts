@@ -40,6 +40,7 @@ const useGetPrices = (
 };
 
 const useGetMedservicesForFacility = (
+  url: string,
   body: {
     facilityId: string;
     download: boolean;
@@ -71,7 +72,7 @@ const useGetMedservicesForFacility = (
     queryFn: () =>
       apiClient
         .post({
-          url: `${environment.baseUrl}/service-manager/medServices/getallbyfacilitypaged`,
+          url,
           params: { facilityId },
           body: {
             download,

@@ -123,7 +123,7 @@ const UserManagement = () => {
   );
 
   const { isLoading, data: userData } = useGetUsers(
-    `${url.href}&facilityId=${user?.FACILITY_ID}&currentPage=1&startIndex=1&pageSize=10`,
+    `${url.href}&facilityId=${user?.FACILITY_ID}&currentPage=${currentPage}&startIndex=1&pageSize=${pageSize}`,
     { facilityId: user ? user.FACILITY_ID : '' },
     { enabled: !!user?.FACILITY_ID },
     { currentPage, pageSize }

@@ -85,6 +85,7 @@ const NewProcedureModal = ({
       });
   };
 
+  //REFACTOR: All API services should use react-query
   const getAllCategories = () => {
     _getMedserviceCategories()
       .then((res: any) => {
@@ -95,6 +96,7 @@ const NewProcedureModal = ({
       .catch(() => {});
   };
 
+  // console.log('categoriesList', categoriesList);
   useEffect(() => {
     getAllCategories();
 

@@ -12,7 +12,7 @@ import { IMedservice, IProcedureCategory } from '@cloud-equipment/models';
 import { _getPrices } from '../../../services/procedures.service';
 import * as Assets from '@cloud-equipment/assets';
 import medserviceQueries from '../../../services/queries/medservices';
-import { NavTab, Table } from '@cloud-equipment/ui-components';
+import { Table } from '@cloud-equipment/ui-components';
 import NewProcedureModal from './modals/NewProcedureModal';
 import DeleteProdecureModal from './modals/DeleteProdecureModal';
 import ApprovePriceModal from './modals/ApprovePriceModal';
@@ -20,6 +20,16 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useSelector } from 'react-redux';
 import { IAppState } from '../../../Store/store';
 import { formatDate } from '@cloud-equipment/utils';
+import { useFilters } from '@cloud-equipment/hooks';
+import { environment } from '@cloud-equipment/environments';
+
+export type ActionType = null | 'edit' | 'shareResult';
+type ModalTypes =
+  | 'priceModal'
+  | 'editPriceModal'
+  | 'deleteModal'
+  | 'confirmModal'
+  | null;
 
 type TableColumns = { [key: string]: string };
 
@@ -28,7 +38,9 @@ const columnHelper = createColumnHelper<TableColumns>();
 const columns = (
   ProcedureMapping: () => {
     [key: string]: IProcedureCategory;
-  }
+  },
+  openModalFn: (view: ModalTypes, selectedProcedure: IMedservice) => void,
+  closeModalFn: () => void
 ) => [
   columnHelper.accessor('dateCreated', {
     header: 'Date & Time Added',
@@ -53,25 +65,57 @@ const columns = (
     header: 'Status',
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor('elipsis', {
+    cell: ({
+      row: {
+        original: { ...rest },
+      },
+    }) => {
+      // REFACTOR: is this necessary
+      const cb = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // console.log('e', e);
+      };
+      return (
+        <ReportsListDropdown
+          {...{
+            cb,
+            data: { ...rest },
+            openModalFn,
+            closeModalFn,
+          }}
+        />
+      );
+    },
+    header: '',
+  }),
 ];
 
 const PriceManagement = () => {
   const userDetails = useSelector((state: IAppState) => state.auth.user);
 
-  // table
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [total, setTotal] = useState(0);
-
   const { useGetMedservicesForFacility, useGetMedServicesProcedureCategories } =
     medserviceQueries;
-  const { data: paginatedResponse, isLoading } = useGetMedservicesForFacility({
-    facilityId: userDetails?.FACILITY_ID as string,
-    download: false,
-    currentPage,
-    startIndex: 0,
-    pageSize,
-  });
+
+  const {
+    url,
+    filters: { currentPage, pageSize },
+    setFilters,
+  } = useFilters(
+    environment.baseUrl,
+    '/service-manager/medServices/getallbyfacilitypaged'
+  );
+
+  const { data: paginatedResponse, isLoading } = useGetMedservicesForFacility(
+    `${url.href}&facilityId=${userDetails?.FACILITY_ID}&currentPage=${currentPage}&startIndex=1&pageSize=${pageSize}`,
+    {
+      facilityId: userDetails?.FACILITY_ID as string,
+      download: false,
+      currentPage,
+      startIndex: 0,
+      pageSize,
+    }
+  );
+
   const {
     data: procedureCategoriesData,
     isLoading: procedureCategoriesLoading,
@@ -79,6 +123,28 @@ const PriceManagement = () => {
     '/service-manager/medServiceCategory/getallcategory'
   );
 
+  // pagination logic
+  const total = paginatedResponse?.totalCount || 0;
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    page: number
+  ) => {
+    setFilters((prev: Params) => ({ ...prev, currentPage: page + 1 }));
+  };
+  const handleChangeRowsPerPage = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFilters((prev: Params) => ({
+      ...prev,
+      pageSize: Number(e.target.value),
+    }));
+  };
+  // pagination logic ends here
+
+  /**
+   * @description - this helps us map the category code to an actual value
+   * @returns
+   */
   const ProcedureMapping = () => {
     const procedureMapping: { [key: string]: IProcedureCategory } = {};
     if (procedureCategoriesData) {
@@ -88,95 +154,59 @@ const PriceManagement = () => {
     }
     return procedureMapping;
   };
+
   //   menu
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedProcedure, setSelectedProcedure] =
     useState<null | IMedservice>(null);
 
-  //   modals
-  const [priceModalOpen, setPriceMOdalOpen] = React.useState(false);
-  const [deleteModalOpen, setDeleteMOdalOpen] = React.useState(false);
-  const [approveModalOpen, setApproveMOdalOpen] = React.useState(false);
+  const [openModal, setOpenModal] = useState<ModalTypes>(null);
 
-  //   table
-  const handleChangePage = (event: any, newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: any) => {
-    setCurrentPage(0);
-    setPageSize(parseInt(event.target.value, 10));
-  };
-
-  //   menu
-  const handleActionClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    x: IMedservice
+  const openModalFn = (
+    view: ModalTypes = null,
+    selectedProcedure: null | IMedservice = null
   ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedProcedure(x);
+    setSelectedProcedure(selectedProcedure);
+    setOpenModal(view);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleEditClick = () => {
-    handleMenuClose();
-    setApproveMOdalOpen(true);
-    setPriceMOdalOpen(true);
-  };
-
-  const handleDeleteClick = () => {
-    handleMenuClose();
-    setDeleteMOdalOpen(true);
-  };
-
-  const handleApproveClick = () => {
-    handleMenuClose();
-    setApproveMOdalOpen(true);
-  };
-
-  //   modals
-  const openPriceModal = () => {
+  const closeModal = () => {
+    setOpenModal(null);
     setSelectedProcedure(null);
-    setPriceMOdalOpen(true);
   };
-
-  const closePriceModal = () => setPriceMOdalOpen(false);
-  const closeDeleteModal = () => setDeleteMOdalOpen(false);
-  const closeApproveModal = () => setApproveMOdalOpen(false);
 
   return (
     <>
-      <Modal open={priceModalOpen} onClose={closePriceModal}>
+      <Modal
+        open={['editPriceModal', 'priceModal'].includes(openModal ?? '')}
+        onClose={closeModal}
+      >
         <div>
           {
             <NewProcedureModal
               procedureToEdit={selectedProcedure}
-              onClose={closePriceModal}
+              onClose={closeModal}
             />
           }
         </div>
       </Modal>
 
-      <Modal open={deleteModalOpen} onClose={closeDeleteModal}>
+      <Modal open={openModal === 'deleteModal'} onClose={closeModal}>
         <div>
           {
             <DeleteProdecureModal
               procedureToEdit={selectedProcedure!}
-              onClose={closeDeleteModal}
+              onClose={closeModal}
             />
           }
         </div>
       </Modal>
 
-      <Modal open={approveModalOpen}>
+      <Modal open={openModal === 'confirmModal'}>
         <div>
           {
             <ApprovePriceModal
               procedureData={selectedProcedure!}
-              onClose={closeApproveModal}
+              onClose={closeModal}
             />
           }
         </div>
@@ -184,7 +214,7 @@ const PriceManagement = () => {
 
       <section className="ce-px ce-py">
         <div className="flex justify-end gap-4 flex-wrap mt-5">
-          <button onClick={openPriceModal} className="ce-btn">
+          <button onClick={() => openModalFn('priceModal')} className="ce-btn">
             New Price/ Test
           </button>
         </div>
@@ -210,20 +240,20 @@ const PriceManagement = () => {
             </button>
           </div>
 
-          {/* <NavTab
-            links={[
-              { label: 'All Prices', href: '/management/medservices' },
-              { label: 'Approved Prices', href: '.' },
-              { label: 'Pending Prices', href: '.' },
-            ]}
-            wrapperClass="mt-6"
-          /> */}
-
           <Table
             loading={isLoading}
             data={paginatedResponse?.resultItem ?? []}
-            columns={columns(ProcedureMapping)}
+            columns={columns(ProcedureMapping, openModalFn, closeModal)}
             tableHeading="All Procedures"
+          />
+          <TablePagination
+            component="div"
+            count={total}
+            page={currentPage - 1}
+            labelRowsPerPage="Items per page"
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPage={pageSize}
           />
         </div>
       </section>
@@ -233,60 +263,64 @@ const PriceManagement = () => {
 
 export default PriceManagement;
 
-const TableMenuDropdown = ({
+const ReportsListDropdown = ({
   cb,
-  patientData,
+  data,
+  openModalFn,
+  closeModalFn,
 }: {
   cb: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  // patientData: IPatient;
-  patientData: any;
+  data: any;
+  openModalFn: (view: ModalTypes, selectedProcedure: IMedservice) => void;
+  closeModalFn: () => void;
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     cb(event);
     setAnchorEl(event.currentTarget);
   };
 
+  anchorEl && console.log('data', data);
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const viewPatient = () => {
-    // navigate(`/management/patients/view/${patientData.patientUniqueID}`);
-  };
+  const handleMenuAction = () => {};
 
   return (
-    <div>
-      <button
-        onClick={(e) => {
-          handleActionClick(e);
-        }}
-        className="w-6"
-      >
-        <img src={Assets.Icons.Menudots} alt="" />
-      </button>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            viewPatient();
-            handleMenuClose();
+    <>
+      <div>
+        <button
+          onClick={(e) => {
+            handleActionClick(e);
+          }}
+          className="w-6"
+        >
+          <img src={Assets.Icons.Menudots} alt="" />
+        </button>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
           }}
         >
-          <ListItemIcon>
-            <img src={Assets.Icons.EditPrice} alt="" />
-          </ListItemIcon>
-          <ListItemText>View Patient</ListItemText>
-        </MenuItem>
-      </Menu>
-    </div>
+          <MenuItem onClick={() => openModalFn('editPriceModal', data)}>
+            <ListItemIcon>
+              <img src={Assets.Icons.ReportEditIcon} alt="" />
+            </ListItemIcon>
+            <ListItemText>Edit Test</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuAction}>
+            <ListItemIcon>
+              <img src={Assets.Icons.ReportViewProfileIcon} alt="" />
+            </ListItemIcon>
+            <ListItemText>View Profile</ListItemText>
+          </MenuItem>
+        </Menu>
+      </div>
+    </>
   );
 };

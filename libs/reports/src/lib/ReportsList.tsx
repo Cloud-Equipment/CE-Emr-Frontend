@@ -31,6 +31,7 @@ export type ActionType =
   | 'confirmTest'
   | 'uploadResult'
   | 'edit';
+
 type ReportTableColumns = IProcedure & {
   elipsis: 'elipsis';
   isRebate: string;
@@ -48,18 +49,6 @@ const columns = [
     header: 'Procedure/Test Ordered',
     cell: (info) => info.getValue(),
   }),
-  // columnHelper.accessor('patientName', {
-  //   header: 'Patient Name',
-  //   cell: (info) => info.getValue(),
-  // }),
-  // columnHelper.accessor('patientAge', {
-  //   header: 'Age of Patient',
-  //   cell: (info) => info.getValue(),
-  // }),
-  // columnHelper.accessor('patientPhone', {
-  //   header: 'Phone Number',
-  //   cell: (info) => info.getValue(),
-  // }),
   columnHelper.accessor('subotal', {
     header: 'Amount',
     cell: (info) => `₦ ${numeral(info.getValue()).format('0,0.00')}`,

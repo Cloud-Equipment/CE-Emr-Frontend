@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
+import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
+import numeral from 'numeral';
+
 import {
   Autocomplete,
   MenuItem,
@@ -37,10 +42,7 @@ import {
   MultiSelectWithCheckbox,
   TextArea,
 } from '@cloud-equipment/ui-components';
-import { Gender } from '../constants';
-import dayjs from 'dayjs';
-import { toast } from 'react-toastify';
-import numeral from 'numeral';
+import { Gender, MaritalStatus } from '../constants';
 
 const CreateReportForm = () => {
   const userDetails = useSelector(
@@ -506,6 +508,7 @@ const CreateReportForm = () => {
             control={control}
             label="Patient Mobile Number"
             name="patientPhone"
+            containerClass="h-[70px]"
           />
 
           <Controller
@@ -558,6 +561,20 @@ const CreateReportForm = () => {
             onSelectionChange={(x) => {
               setSelectedProcedures(x.map((r) => Number(r)));
             }}
+          />
+
+          <Controller
+            name="maritalStatusId"
+            control={control}
+            defaultValue={0}
+            render={({ field }) => (
+              <Select
+                options={MaritalStatus}
+                label="Marital Status"
+                placeholder="Select Marital Status"
+                {...{ field }}
+              />
+            )}
           />
         </div>
 
