@@ -44,6 +44,24 @@ import {
 } from '@cloud-equipment/ui-components';
 import { Gender, MaritalStatus } from '../constants';
 
+interface FormProps {
+  patientPhone: string;
+  patientAge: number | null;
+  patientAddress: string;
+  patientGenderId: number | null;
+  patientEmail: string;
+  patientId: string;
+  patientName: string;
+  patientNumber: string;
+  maritalStatusId: number;
+  refererName: string;
+  refererHospital: string;
+  refererEmail: string;
+  refererPhone: string;
+  remarks: string;
+  takingMeds: string;
+}
+
 const CreateReportForm = () => {
   const userDetails = useSelector(
     (state: { auth: { user: IUser } }) => state.auth.user
@@ -70,8 +88,15 @@ const CreateReportForm = () => {
     }
   }, []);
 
-  const { register, handleSubmit, watch, setValue, control, getValues } =
-    useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    getValues,
+    formState: { errors },
+  } = useForm<FormProps>();
 
   const [patientName, setPatientName] = useState('');
   const [existingPatientId, setExistingPatientId] = useState<string | null>(
@@ -97,9 +122,9 @@ const CreateReportForm = () => {
 
   const clearPatientFound = () => {
     setValue('patientPhone', '');
-    setValue('patientAge', '');
+    setValue('patientAge', null);
     setValue('patientAddress', '');
-    setValue('patientGenderId', '');
+    setValue('patientGenderId', null);
     setValue('patientEmail', '');
   };
 
@@ -509,18 +534,21 @@ const CreateReportForm = () => {
             label="Patient Mobile Number *"
             name="patientPhone"
             containerClass="h-[70px]"
+            error={errors?.patientPhone}
           />
 
           <Controller
             name="patientGenderId"
             control={control}
-            defaultValue={0}
+            // defaultValue={0}
+            rules={{ required: 'Gender is required' }}
             render={({ field }) => (
               <Select
                 options={Gender}
                 label="Gender *"
                 placeholder="Select Gender"
                 containerClass="flex-1"
+                error={errors?.patientGenderId}
                 {...{ field }}
               />
             )}
@@ -529,6 +557,7 @@ const CreateReportForm = () => {
           <Input
             label="Age of the Patient *"
             {...register('patientAge', { required: 'Patient age is required' })}
+            error={errors?.patientAge}
             type="number"
           />
 
@@ -538,6 +567,7 @@ const CreateReportForm = () => {
             {...register('patientEmail', {
               required: 'Patient email is required',
             })}
+            error={errors?.patientEmail}
             type="email"
           />
 
@@ -547,6 +577,7 @@ const CreateReportForm = () => {
             {...register('patientAddress', {
               required: 'Patient address is required',
             })}
+            error={errors?.patientAddress}
           />
 
           <MultiSelectWithCheckbox
@@ -561,17 +592,20 @@ const CreateReportForm = () => {
             onSelectionChange={(x) => {
               setSelectedProcedures(x.map((r) => Number(r)));
             }}
+            // error={errors?.procedures}
           />
 
           <Controller
             name="maritalStatusId"
             control={control}
-            defaultValue={0}
+            // defaultValue={0}
+            rules={{ required: 'Marital Status is required' }}
             render={({ field }) => (
               <Select
                 options={MaritalStatus}
                 label="Marital Status *"
                 placeholder="Select Marital Status"
+                error={errors?.maritalStatusId}
                 {...{ field }}
               />
             )}
@@ -636,15 +670,16 @@ const CreateReportForm = () => {
                   readOnly
                 />
               </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  deleteRebateForProcedure(procedureId);
-                }}
-              >
-                <img src={Assets.Icons.Delete} alt="" />
-              </button>
+              <div className="flex items-end pb-2 h-full">
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteRebateForProcedure(procedureId);
+                  }}
+                >
+                  <img src={Assets.Icons.Delete} alt="" />
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -696,6 +731,7 @@ const CreateReportForm = () => {
                 control={control}
                 label="Referer Phone Number"
                 name="refererPhone"
+                containerClass="h-[70px]"
               />{' '}
             </>
           ) : null}

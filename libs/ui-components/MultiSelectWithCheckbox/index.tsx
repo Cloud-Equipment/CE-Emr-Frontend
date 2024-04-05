@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import {
   Checkbox,
   ListItemText,
@@ -5,7 +7,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { FieldError } from 'react-hook-form';
 
 interface IOption {
   id: string;
@@ -18,6 +20,7 @@ interface MultiSelectProps {
   wrapperClass?: string;
   onSelectionChange?: (selected: string[]) => void;
   options: IOption[]; // would refactor this to be custom
+  error?: FieldError;
 }
 
 const MultiSelectWithCheckbox = ({
@@ -25,6 +28,7 @@ const MultiSelectWithCheckbox = ({
   wrapperClass,
   onSelectionChange,
   options,
+  error,
 }: MultiSelectProps) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
@@ -71,6 +75,7 @@ const MultiSelectWithCheckbox = ({
           </MenuItem>
         ))}
       </Select>
+      {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
     </div>
   );
 };

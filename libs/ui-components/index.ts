@@ -14,6 +14,7 @@ export { default as FileUploadWithModal } from './FileUploadWithModal';
 export { default as TextArea } from './TextArea';
 export { default as TimePicker } from './TimePicker';
 export { default as PhoneInputField } from './PhoneInputField';
+export { default as PhoneInputFieldV2 } from './PhoneInputFieldV2';
 export { default as Layout } from './Layout';
 export { default as SearchableInput } from './SearchableInput';
 export { default as MultiSelectWithCheckbox } from './MultiSelectWithCheckbox';

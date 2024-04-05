@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Control, Controller, FieldError } from 'react-hook-form';
 import PhoneInput from 'react-phone-input-2';
@@ -29,6 +29,24 @@ const PhoneInputField = ({
   required = true,
   error,
 }: PhoneInputProps) => {
+  // console.log('control', control._getWatch('patientPhone'));
+  //   const phoneCountryFormat = useMemo(() => phoneCountry?.format || undefined, [phoneCountry]);
+  // const placeholder = useMemo(() => {
+  //   if (phoneCountryFormat) {
+  //     const words = phoneCountryFormat.split(' ');
+  //     words.shift(); // I'm using only local numbers so here I remove the country code from the format
+  //     let text = words.join(' ');
+  //      // first digit is special on french numbers, these 3 lines could be removed
+  //     // if (country === 'fr') {
+  //     //   text = text.replace('.', '6');
+  //     // }
+  //     while (text.indexOf('.') > -1) {
+  //       text = text.replace('.', `${Math.min(9, Math.max(1, Math.floor(Math.random() * 10)))}`);
+  //     }
+  //     return text;
+  //   }
+  //   return '';
+  // }, [phoneCountryFormat/*, country*/]);
   return (
     <div className={cx({ 'flex flex-col gap-1': !!label })}>
       <div
@@ -59,6 +77,7 @@ const PhoneInputField = ({
               placeholder="+23492929292"
               inputStyle={!!error ? { border: '1px solid red' } : {}}
               buttonStyle={!!error ? { border: '1px solid red' } : {}}
+              enableAreaCodes={true}
               inputProps={{
                 name: name,
                 // required: required,
@@ -71,8 +90,8 @@ const PhoneInputField = ({
             />
           )}
         />
+        {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
       </div>
-      {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
     </div>
   );
 };

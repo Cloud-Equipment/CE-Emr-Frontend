@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import { Controller, useForm } from 'react-hook-form';
 import {
   Checkbox,
@@ -10,6 +11,13 @@ import {
   SelectChangeEvent,
   Select as MatSelect,
 } from '@mui/material';
+import { toast } from 'react-toastify';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import numeral from 'numeral';
+import { useSelector } from 'react-redux';
+
 import * as Assets from '@cloud-equipment/assets';
 import {
   // DatePicker,
@@ -28,17 +36,25 @@ import patientQueries from '../../services/queries/managePatients';
 import apppointmentQueries from '../../services/queries/appointments';
 import refererQueries from '../../services/queries/manageReferers';
 import { IMedservice, IPatient } from '@cloud-equipment/models';
-import { useSelector } from 'react-redux';
 import { IAppState } from '../../Store/store';
-import { toast } from 'react-toastify';
 import { ReportsPriceBreakdown } from './ReportsPriceBreakdown';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
 import { Gender, MaritalStatus } from '../../constants';
-import numeral from 'numeral';
 import { environment } from '@cloud-equipment/environments';
 import { useFilters } from '@cloud-equipment/hooks';
+
+interface FormProps {
+  patientName: string;
+  patientNumber: string;
+  patientEmail: string;
+  patientGenderId: number;
+  patientAge: number;
+  maritalStatusId: number;
+  patientBloodGroup: string;
+  bloodPressure: string;
+  pulse: string;
+  takingMeds: boolean;
+  [key: string]: any;
+}
 
 const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
   const userDetails = useSelector((state: IAppState) => state.auth.user);
@@ -125,9 +141,14 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
 
   const [createPromptIsOpen, setCreatePromptIsOpen] = useState(false);
 
-  const { register, handleSubmit, control, getValues, setValue } = useForm({
-    defaultValues: {} as any,
-  });
+  const {
+    register,
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<FormProps>();
   const [appointmentDate, setAppointmentDate] = useState<Dayjs | null>(null);
 
   const onSubmit = () => {
@@ -424,6 +445,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               className="grid md:grid-cols-2 gap-5 mt-6"
               onSubmit={handleSubmit(onSubmit)}
             >
+              {/* add required */}
               <SearchableInput
                 options={patientsFound ?? []}
                 label="Patient Name *"
@@ -433,6 +455,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                   handleSelectedPatientFromSearch(option)
                 }
                 optionLabelKey="patientName"
+                error={errors?.patientName}
               />
 
               <PhoneInputField
@@ -441,6 +464,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 name="patientNumber"
                 readonly={!!existingPatientId}
                 containerClass="h-[72px]"
+                error={errors?.patientNumber}
               />
 
               <Input
@@ -448,18 +472,21 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 placeholder="adepoju@cloud.io"
                 readOnly={!!existingPatientId}
                 {...register('patientEmail')}
+                error={errors?.patientEmail}
               />
 
               <Controller
                 name="patientGenderId"
                 control={control}
-                defaultValue={0}
+                // defaultValue={0}
+                rules={{ required: 'Gender is required' }}
                 render={({ field }) => (
                   <Select
                     options={Gender}
                     label="Gender *"
                     placeholder="Select Gender"
                     containerClass="flex-1"
+                    error={errors?.patientGenderId}
                     {...{ field }}
                   />
                 )}
@@ -473,17 +500,20 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 {...register('patientAge', {
                   required: 'Patient Age is required ',
                 })}
+                error={errors?.patientAge}
               />
 
               <Controller
                 name="maritalStatusId"
                 control={control}
-                defaultValue={0}
+                rules={{ required: 'Marital Status is required' }}
+                // defaultValue={0}
                 render={({ field }) => (
                   <Select
                     options={MaritalStatus}
                     label="Marital Status *"
                     placeholder="Select Marital Status"
+                    error={errors?.maritalStatusId}
                     {...{ field }}
                   />
                 )}
@@ -501,12 +531,14 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 onSelectionChange={(x) => {
                   setSelectedProcedures(x.map((r) => Number(r)));
                 }}
+                // error={errors}
               />
 
               <Controller
                 name="patientBloodGroup"
                 control={control}
-                defaultValue={0}
+                rules={{ required: 'Blood Group is required' }}
+                // defaultValue={0}
                 render={({ field }) => (
                   <Select
                     options={[
@@ -562,6 +594,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                     label="Patient Blood Group  *"
                     placeholder="Select Blood Group"
                     containerClass="flex-1"
+                    error={errors?.patientBloodGroup}
                     {...{ field }}
                   />
                 )}
@@ -571,22 +604,28 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 label="Blood Pressure *"
                 placeholder="80/120"
                 readOnly={!!existingPatientId}
-                {...register('bloodPressure', {})}
+                error={errors?.bloodPressure}
+                {...register('bloodPressure', {
+                  required: 'Blood Group is required',
+                })}
               />
 
               <Input
                 label="Pulse *"
                 placeholder="80/120"
                 readOnly={!!existingPatientId}
-                {...register('pulse', {})}
+                error={errors?.pulse}
+                {...register('pulse', { required: 'Pulse is required' })}
               />
 
               <div className="md:col-span-2">
+                {/* REFACTOR: Move to it's own component */}
                 <p>Taking any medications currently? *</p>
 
                 <Controller
                   name="takingMeds"
                   control={control}
+                  rules={{ required: 'This field is required' }}
                   render={({ field }) => (
                     <RadioGroup defaultValue={false} row {...field}>
                       <FormControlLabel
@@ -604,19 +643,25 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                     </RadioGroup>
                   )}
                 />
+                {!!errors?.takingMeds && (
+                  <p className="text-red-500 text-sm">
+                    {errors?.takingMeds?.message}
+                  </p>
+                )}
               </div>
 
-              {/* REFACTOR: This is redundant, the provider already exists */}
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateTimePicker
-                  label="Appointment Date and Time"
-                  value={appointmentDate}
-                  minDateTime={dayjs()}
-                  onChange={(newValue) => {
-                    setAppointmentDate(newValue);
-                  }}
-                />
-              </LocalizationProvider>
+              {/* REFACTOR: This is redundant, the provider already exists in app.tsx*/}
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+              {/* TODO: move to it's own component */}
+              <DateTimePicker
+                label="Appointment Date and Time"
+                value={appointmentDate}
+                minDateTime={dayjs()}
+                onChange={(newValue) => {
+                  setAppointmentDate(newValue);
+                }}
+              />
+              {/* </LocalizationProvider> */}
 
               {/* Rebates Section */}
               <div className="md:col-span-2 border-b-[2px] pb-1 mt-6 md:mt-10 border-b-solid border-borderLine">
@@ -770,6 +815,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                 className="md:w-[270px]"
                 disabled={!selectedProcedures.length}
                 label="Book an Appointment"
+                title={!selectedProcedures.length ? `Select a procedure` : ''}
               />
             </form>
           </>

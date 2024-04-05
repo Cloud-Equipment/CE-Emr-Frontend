@@ -15,7 +15,7 @@ interface SelectProps<T extends string>
   error?: FieldError;
 }
 
-// TODO: fix the validation issue, it does not show because of the errors
+// TODO: fix the validation issue, it does not show because of the default value
 const SelectDropdown: React.FC<any> = <T extends string>({
   className,
   label,
@@ -48,7 +48,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
         className={cx(
           'py-2.5 pr-2 pl-3 rounded-lg focus:outline-none w-full h-12 border',
           className,
-          { 'outline-red-500 border border-red-500': !!error }
+          { 'outline-0 outline-red-500 border border-red-500': !!error }
         )}
         inputProps={{ 'aria-label': 'Without label' }}
         disabled={disabled}

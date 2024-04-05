@@ -1,0 +1,11 @@
+div.react-tel-input {
+  flex: 1;
+
+  .form-control {
+    @apply h-full rounded-lg w-full;
+  }
+
+  .flag-dropdown {
+    @apply rounded-tl-lg rounded-bl-lg;
+}
+}

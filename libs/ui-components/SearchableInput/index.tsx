@@ -1,6 +1,10 @@
-import { Autocomplete, MenuItem, TextField } from '@mui/material';
 import React from 'react';
+
+import { Autocomplete, MenuItem, TextField } from '@mui/material';
+import cx from 'classnames';
+
 import * as Assets from '@cloud-equipment/assets';
+import { FieldError } from 'react-hook-form';
 
 interface SearchableInputProps {
   options: any[];
@@ -11,6 +15,7 @@ interface SearchableInputProps {
   onOptionSelect: (selectedOption: any) => void; // emit to parent when user selects an option from dropdown
   optionLabelKey: string; // property to check for as the displayed value of an option
   isDoctor?: boolean; // very temporal,, we should pass an element ref instead, to render the option label
+  error?: FieldError;
 }
 
 const SearchableInput = ({
@@ -22,13 +27,20 @@ const SearchableInput = ({
   optionLabelKey,
   containerClass,
   isDoctor,
+  error,
 }: SearchableInputProps) => {
   return (
-    <div className={`form-input-label-holder ${containerClass}`}>
+    <div
+      className={cx(
+        { 'flex flex-col gap-1': !!label },
+        { [`${containerClass}`]: !!containerClass }
+      )}
+    >
       <label>{label}</label>
       <Autocomplete
         freeSolo
         options={options ?? []}
+        className={cx({ 'border border-red-500 rounded-lg': !!error })}
         // onInputChange={(event, newInputValue) => {
         //   setPatientName(newInputValue);
         // }}
@@ -47,6 +59,10 @@ const SearchableInput = ({
             InputProps={{
               ...params.InputProps,
             }}
+            className={cx(
+              'py-2.5 pr-2 pl-3 rounded-lg focus:outline-none w-full h-12 border',
+              { 'outline-red-500 border border-red-500': error }
+            )}
           />
         )}
         getOptionLabel={(option) => {
@@ -67,9 +83,7 @@ const SearchableInput = ({
                 </p>
                 {isDoctor ? (
                   <>
-                    <p className="text-xs">
-                      {option.doctorEmail}
-                    </p>
+                    <p className="text-xs">{option.doctorEmail}</p>
                     <p className="text-xs font-semibold">
                       {option.doctorHospital}
                     </p>
@@ -85,6 +99,7 @@ const SearchableInput = ({
           </MenuItem>
         )}
       />
+      {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
     </div>
   );
 };
