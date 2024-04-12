@@ -116,7 +116,7 @@ const Sidebar = ({
                 key={index}
                 onClick={handleCloseSidebar}
                 to={navItem.route}
-                className="!mt-0 main-icon"
+                className=" my-3 main-icon"
               >
                 <img className="w-6" src={navItem.img} alt={navItem.name} />
                 <span className="collapse-hideText">{navItem.name}</span>

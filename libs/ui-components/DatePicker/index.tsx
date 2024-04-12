@@ -21,7 +21,6 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
   error,
   ...rest
 }) => {
-  console.log('error', error);
   return (
     <div
       className={cx(
@@ -39,14 +38,6 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
           className,
           { ' outline-red-500 border border-red-500': !!error }
         )}
-        // sx={{
-        //   '& .MuiOutlinedInput-root': {
-        //     borderColor: 'red', // Use your Tailwind color here
-        //     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        //       borderColor: 'red', // Adjust for focused state
-        //     },
-        //   },
-        // }}
         format="DD/MM/YYYY"
         maxDate={maxDate}
         {...rest}

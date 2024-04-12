@@ -277,12 +277,13 @@ const ReportsListDropdown = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     cb(event);
     setAnchorEl(event.currentTarget);
   };
 
-  anchorEl && console.log('data', data);
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: any) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
@@ -302,7 +303,7 @@ const ReportsListDropdown = ({
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
+          onClose={(e) => handleMenuClose(e)}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}

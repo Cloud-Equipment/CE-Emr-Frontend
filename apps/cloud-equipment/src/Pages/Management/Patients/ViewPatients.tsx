@@ -61,6 +61,7 @@ const columns = [
 ];
 
 const ViewPatients = () => {
+  const navigate = useNavigate();
   const { useGetPatients } = queries;
 
   const { user } = useSelector((state: IAppState) => state.auth);
@@ -95,6 +96,10 @@ const ViewPatients = () => {
       ...prev,
       pageSize: Number(e.target.value),
     }));
+  };
+
+  const handleRowClick = (rowObject: PatientTableColumns) => {
+    navigate(`/management/patient/${rowObject.patientUniqueID}`);
   };
 
   return (
@@ -135,6 +140,9 @@ const ViewPatients = () => {
             data={data?.resultItem || []}
             columns={columns}
             tableHeading={`Patients List - ${total}`}
+            tableRowOnclickFunction={(rowObject: PatientTableColumns) =>
+              handleRowClick(rowObject)
+            }
           />
 
           <TablePagination
@@ -166,11 +174,13 @@ const TableMenuDropdown = ({
   const navigate = useNavigate();
 
   const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     cb(event);
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: any) => {
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
@@ -191,15 +201,15 @@ const TableMenuDropdown = ({
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+        onClose={(e) => handleMenuClose(e)}
         MenuListProps={{
           'aria-labelledby': 'basic-button',
         }}
       >
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
             viewPatient();
-            handleMenuClose();
+            handleMenuClose(e);
           }}
         >
           <ListItemIcon>

@@ -94,6 +94,7 @@ const columns = [
 ];
 
 const ReportsList = () => {
+  const navigate = useNavigate();
   const userDetails = useSelector(
     (state: { auth: { user: IUser } }) => state.auth.user
   );
@@ -146,6 +147,10 @@ const ReportsList = () => {
     });
   };
 
+  const handleRowClick = (rowObject: ReportTableColumns) => {
+    navigate(`/reports/view/${rowObject?.procedureEntryId}`);
+  };
+
   return (
     <section className="ce-px ce-py">
       <h4 className="text-ce-green font-bold text-2xl">
@@ -194,6 +199,9 @@ const ReportsList = () => {
           data={data?.resultItem || []}
           columns={columns}
           tableHeading="All Reports"
+          tableRowOnclickFunction={(rowObject: ReportTableColumns) =>
+            handleRowClick(rowObject)
+          }
         />
 
         <TablePagination
@@ -242,18 +250,31 @@ const ReportsListDropdown = ({
   const { mutateFn } = useConfirmTest();
 
   const handleActionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     cb(event);
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: any) => {
+    // NOTE: Since clicking on each table row performs an action, we have to stop propagation
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
-  const onClose = () => setShowUploadModal(false);
-  const onClose2 = () => setShowEditModal(false);
+  const onClose = (e: any) => {
+    e.stopPropagation();
+    setShowUploadModal(false);
+  };
+  const onClose2 = (e: any) => {
+    e.stopPropagation();
+    setShowEditModal(false);
+  };
 
-  const handleActionsClick = async (view: ActionType) => {
+  const handleActionsClick = async (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    view: ActionType
+  ) => {
+    e.stopPropagation();
     if (view === 'shareResult') {
       await TransformObject(data);
       console.log(jsonToCSV([data]));
@@ -272,55 +293,58 @@ const ReportsListDropdown = ({
     }
   };
 
-  const handleMenuAction = () => {
+  const handleMenuAction = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    e.stopPropagation();
     navigate(`/reports/view/${procedureEntryId}`);
   };
 
   return (
-    <>
+    <div // NOTE: Because of clicking  the table rows navig
+      onClick={(e) => e.stopPropagation()}
+    >
       <div>
         <button
           onClick={(e) => {
             handleActionClick(e);
           }}
-          className="w-6"
+          className="w-6 "
         >
           <img src={Assets.Icons.Menudots} alt="" />
         </button>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
+          onClose={(e) => handleMenuClose(e)}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={() => handleActionsClick('edit')}>
+          <MenuItem onClick={(e) => handleActionsClick(e, 'edit')}>
             <ListItemIcon>
               <img src={Assets.Icons.ReportEditIcon} alt="" />
             </ListItemIcon>
             <ListItemText>Edit Test</ListItemText>
           </MenuItem>
-          <MenuItem onClick={handleMenuAction}>
+          <MenuItem onClick={(e) => handleMenuAction(e)}>
             <ListItemIcon>
               <img src={Assets.Icons.ReportViewProfileIcon} alt="" />
             </ListItemIcon>
             <ListItemText>View Profile</ListItemText>
           </MenuItem>
 
-          <MenuItem onClick={() => handleActionsClick('confirmTest')}>
+          <MenuItem onClick={(e) => handleActionsClick(e, 'confirmTest')}>
             <ListItemIcon>
               <img src={Assets.Icons.ReportConfirmIcon} alt="" />
             </ListItemIcon>
             <ListItemText>Confirm Test</ListItemText>
           </MenuItem>
-          <MenuItem onClick={() => handleActionsClick('uploadResult')}>
+          <MenuItem onClick={(e) => handleActionsClick(e, 'uploadResult')}>
             <ListItemIcon>
               <img src={Assets.Icons.ReportUploadIcon} alt="" />
             </ListItemIcon>
             <ListItemText>Upload Result</ListItemText>
           </MenuItem>
-          <MenuItem onClick={() => handleActionsClick('shareResult')}>
+          <MenuItem onClick={(e) => handleActionsClick(e, 'shareResult')}>
             <ListItemIcon>
               <img src={Assets.Icons.ReportShareIcon} alt="" />
             </ListItemIcon>
@@ -328,7 +352,7 @@ const ReportsListDropdown = ({
           </MenuItem>
         </Menu>
       </div>
-      <Modal open={showUploadModal} onClose={onClose}>
+      <Modal open={showUploadModal} onClose={(e) => onClose(e)}>
         <UploadReportModal onClose={onClose} />
       </Modal>
       <Modal
@@ -338,7 +362,7 @@ const ReportsListDropdown = ({
       >
         <EditReportModal onClose={onClose2} />
       </Modal>
-    </>
+    </div>
   );
 };
 

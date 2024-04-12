@@ -476,7 +476,7 @@ const NewPatient = () => {
                 label="Additional Notes"
                 placeholder="Leave a Note"
                 containerClass="md:col-span-2"
-                {...register('aboutPatient', {
+                {...register('additionalNotes', {
                   required: 'Notes is required ',
                 })}
               />

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Control, Controller, FieldError } from 'react-hook-form';
+import { FieldError } from 'react-hook-form';
 import PhoneInput, {
   PhoneInputProps as PhoneInputPropsMain,
 } from 'react-phone-input-2';
@@ -34,6 +34,10 @@ const PhoneInputField = ({
   className,
   ...rest
 }: PhoneInputProps) => {
+  const errorStyle = !!error ? { border: '1px solid red' } : {};
+
+  // const phoneCountryFormat = useMemo(() => phoneCountry?.format || undefined, [phoneCountry]);
+
   return (
     <div
       className={cx(
@@ -55,16 +59,17 @@ const PhoneInputField = ({
         {...rest}
         country={'ng'}
         placeholder="+23492929292"
-        inputStyle={!!error ? { border: '1px solid red' } : {}}
+        inputStyle={{ ...{ height: '3rem' }, ...errorStyle }}
         buttonStyle={!!error ? { border: '1px solid red' } : {}}
         enableAreaCodes={true}
+        prefix="+"
         inputProps={{
           name: name,
-          // required: required,
-          value: rest.value?.startsWith('+')
-            ? rest.value
-            : rest.value
-            ? `+${rest.value}`
+          required: required,
+          value: !rest?.value
+            ? ''
+            : !rest.value?.startsWith('+')
+            ? `+${rest?.value || ''}`
             : rest.value,
         }}
       />

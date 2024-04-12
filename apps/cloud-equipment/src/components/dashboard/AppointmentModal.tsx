@@ -52,7 +52,7 @@ interface FormProps {
   patientBloodGroup: string;
   bloodPressure: string;
   pulse: string;
-  takingMeds: boolean;
+  takingMeds: boolean | string;
   [key: string]: any;
 }
 
@@ -148,9 +148,12 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
     getValues,
     setValue,
     formState: { errors },
-  } = useForm<FormProps>();
+  } = useForm<FormProps>({
+    defaultValues: {
+      takingMeds: 'false',
+    },
+  });
   const [appointmentDate, setAppointmentDate] = useState<Dayjs | null>(null);
-
   const onSubmit = () => {
     setCreatePromptIsOpen(true);
   };
@@ -424,6 +427,8 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
     }
   }, [selectedProcedures]);
 
+  console.log('errors', errors);
+
   return (
     <>
       <div className="bg-white px-6 py-10 rounded-tl-[20px] rounded-bl-[20px] right-modal overflow-y-auto">
@@ -603,7 +608,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               <Input
                 label="Blood Pressure *"
                 placeholder="80/120"
-                readOnly={!!existingPatientId}
+                // readOnly={!!existingPatientId}
                 error={errors?.bloodPressure}
                 {...register('bloodPressure', {
                   required: 'Blood Group is required',
@@ -613,7 +618,7 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
               <Input
                 label="Pulse *"
                 placeholder="80/120"
-                readOnly={!!existingPatientId}
+                // readOnly={!!existingPatientId}
                 error={errors?.pulse}
                 {...register('pulse', { required: 'Pulse is required' })}
               />
@@ -627,16 +632,22 @@ const AppointmentModal = ({ onClose }: { onClose: () => void }) => {
                   control={control}
                   rules={{ required: 'This field is required' }}
                   render={({ field }) => (
-                    <RadioGroup defaultValue={false} row {...field}>
+                    <RadioGroup defaultValue={'false'} row {...field}>
                       <FormControlLabel
                         control={
-                          <Radio readOnly={!!existingPatientId} value={true} />
+                          <Radio
+                            readOnly={!!existingPatientId}
+                            value={'true'}
+                          />
                         }
                         label="Yes"
                       />
                       <FormControlLabel
                         control={
-                          <Radio readOnly={!!existingPatientId} value={false} />
+                          <Radio
+                            readOnly={!!existingPatientId}
+                            value={'false'}
+                          />
                         }
                         label="No"
                       />

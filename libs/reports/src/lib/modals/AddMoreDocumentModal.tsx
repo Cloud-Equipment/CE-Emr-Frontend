@@ -11,7 +11,7 @@ interface FormProps {
   document: string;
 }
 
-const UploadReportModal = ({ onClose }: { onClose: () => void }) => {
+const UploadReportModal = ({ onClose }: { onClose: (e: any) => void }) => {
   const { register, handleSubmit, control, getValues, setValue, watch } =
     useForm<FormProps>();
   const [file, setFile] = useState<File | null>(null);
