@@ -14,6 +14,7 @@ interface ReactTableProps<T extends object> {
   loading: boolean;
   tableHeading: string;
   tableHeadingColorClassName?: string;
+  tableRowOnclickFunction?: (rowData: T) => void;
 }
 
 const Table: React.FC<any> = <T extends object>({
@@ -22,6 +23,7 @@ const Table: React.FC<any> = <T extends object>({
   loading = true,
   tableHeading,
   tableHeadingColorClassName = '!bg-ce-lgreen',
+  tableRowOnclickFunction = () => {},
 }: ReactTableProps<T>) => {
   const table = useReactTable({
     data,
@@ -54,7 +56,11 @@ const Table: React.FC<any> = <T extends object>({
         {data.length > 0 && (
           <tbody className="">
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
+              <tr
+                className="cursor-pointer"
+                onClick={() => tableRowOnclickFunction(row.original)}
+                key={row.id}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td className="" key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

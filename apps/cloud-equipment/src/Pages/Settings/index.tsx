@@ -42,7 +42,7 @@ const Settings = () => {
           <div className="">
             About | Developers | Terms of Use | Privacy Policy | Settings
           </div>
-          <div className="">@ 2023 Peddlesoft, Inc</div>
+          <div className="">@ 2023 Cloud Equipment, Inc</div>
         </div>
       </div>
     </section>

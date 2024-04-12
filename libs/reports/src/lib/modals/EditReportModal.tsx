@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -32,10 +32,18 @@ import discountQueries from '../queries/discounts';
 import {
   Input,
   PhoneInputField,
+  PhoneInputFieldV2,
   TextArea,
 } from '@cloud-equipment/ui-components';
 
-const EditReportModal = ({ onClose }: { onClose: () => void }) => {
+interface IForm {
+  [key: string]: any;
+}
+
+const EditReportModal = ({ onClose }: { onClose: (e: any) => void }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const userDetails = useSelector(
     (state: { auth: { user: IUser } }) => state.auth.user
   );
@@ -59,9 +67,18 @@ const EditReportModal = ({ onClose }: { onClose: () => void }) => {
     }
   }, []);
 
-  const { register, handleSubmit, watch, setValue, control } = useForm();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { register, handleSubmit, watch, setValue, control } = useForm<IForm>({
+    // defaultValues: useMemo(() => {
+    //   return {
+    //     id: data?.id,
+    //     firstName: data?.firstName,
+    //     lastName: data?.lastName,
+    //     twoFactorEnabled: data?.twoFactorEnabled || false,
+    //     phoneNumber: data?.phoneNumber,
+    //     email: data?.email,
+    //   };
+    // }, [data]),
+  });
 
   const patientId = watch('patientId');
   const [patientName, setPatientName] = useState('');
@@ -393,6 +410,7 @@ const EditReportModal = ({ onClose }: { onClose: () => void }) => {
       )
     );
   }, [selectedProcedures]);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -455,10 +473,20 @@ const EditReportModal = ({ onClose }: { onClose: () => void }) => {
           />
         </div>
 
-        <PhoneInputField
-          control={control}
-          label="Patient Mobile Number"
+        <Controller
           name="patientPhone"
+          control={control}
+          rules={{ required: 'Phone Number is required' }}
+          render={({ field }) => (
+            <PhoneInputFieldV2
+              label="Patient Mobile Number"
+              id="patientPhone"
+              containerClass="h-[72px] flex-1"
+              // error={errors?.patientPhone}
+              // disableCountryCode={true}
+              {...field}
+            />
+          )}
         />
 
         <div className="form-input-label-holder">
@@ -656,10 +684,20 @@ const EditReportModal = ({ onClose }: { onClose: () => void }) => {
           {...register('refererEmail')}
         />
 
-        <PhoneInputField
-          control={control}
-          label="Referer Phone Number"
+        <Controller
           name="refererPhone"
+          control={control}
+          rules={{ required: 'Referer Phone Number is required' }}
+          render={({ field }) => (
+            <PhoneInputFieldV2
+              label="Patient Mobile Number"
+              id="refererPhone"
+              containerClass="h-[72px] flex-1"
+              // error={errors?.refererPhone}
+              // disableCountryCode={true}
+              {...field}
+            />
+          )}
         />
 
         <TextArea

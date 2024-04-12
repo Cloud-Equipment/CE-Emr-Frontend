@@ -136,6 +136,7 @@ const UserManagement = () => {
   ) => {
     setFilters((prev: Params) => ({ ...prev, currentPage: page + 1 }));
   };
+
   const handleChangeRowsPerPage = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -145,14 +146,11 @@ const UserManagement = () => {
     }));
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleRowClick = (rowObject: any) => {
+    // console.log('rowObject', rowObject);
+    // navigate(`/reports/view/${rowObject?.procedureEntryId}`);
   };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
   return (
     <>
       {/* Enable 2Fa Modal */}
@@ -190,6 +188,9 @@ const UserManagement = () => {
             data={userData?.resultItem || []}
             columns={columns}
             tableHeading={`Team members - ${total}`}
+            tableRowOnclickFunction={(rowObject: any) =>
+              handleRowClick(rowObject)
+            }
           />
           <TablePagination
             component="div"
@@ -243,7 +244,9 @@ const ManageStaffDropDown = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    // NOTE: Since clicking on each table row performs an action, we have to stop propagation
+    e.stopPropagation();
     setAnchorEl(null);
   };
 
@@ -266,6 +269,7 @@ const ManageStaffDropDown = ({
       </Modal>
       <button
         onClick={(e) => {
+          e.stopPropagation();
           handleActionClick(e);
         }}
         className="w-6"
@@ -281,7 +285,9 @@ const ManageStaffDropDown = ({
         }}
       >
         {isActive ? (
-          <MenuItem onClick={() => disableFn({ id }, handleMenuClose)}>
+          <MenuItem
+            onClick={(e) => disableFn({ id }, () => handleMenuClose(e))}
+          >
             <ListItemIcon>
               {isDisableLoading ? (
                 <Loader />
@@ -292,7 +298,7 @@ const ManageStaffDropDown = ({
             <ListItemText>Disable User</ListItemText>
           </MenuItem>
         ) : (
-          <MenuItem onClick={() => enableFn({ id }, handleMenuClose)}>
+          <MenuItem onClick={(e) => enableFn({ id }, () => handleMenuClose(e))}>
             <ListItemIcon>
               {isEnableLoading ? (
                 <Loader />
@@ -303,7 +309,7 @@ const ManageStaffDropDown = ({
             <ListItemText>Enable User</ListItemText>
           </MenuItem>
         )}
-        <MenuItem onClick={() => updateUserFn(data, handleMenuClose)}>
+        <MenuItem onClick={(e) => updateUserFn(data, () => handleMenuClose(e))}>
           <ListItemIcon>
             {isUpdateLoading ? (
               <Loader />

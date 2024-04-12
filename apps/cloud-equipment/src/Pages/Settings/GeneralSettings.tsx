@@ -4,7 +4,11 @@ import { useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import { Switch, Modal } from '@mui/material';
 
-import { Button, Input, PhoneInputField } from '@cloud-equipment/ui-components';
+import {
+  Button,
+  Input,
+  PhoneInputFieldV2,
+} from '@cloud-equipment/ui-components';
 import * as Assets from '@cloud-equipment/assets';
 import { SettingsModal } from '../../Modals';
 import { IAppState } from '../../Store/store';
@@ -96,14 +100,21 @@ const GeneralSettings = () => {
               required: 'Last Name is required',
             })}
           />
-          <Input
-            className="active:border-primary-100 focus:outline-primary-100"
-            label="Phone Number *"
-            containerClass="flex-1"
-            error={errors.phoneNumber}
-            {...register('phoneNumber', {
-              required: 'Phone Number is required',
-            })}
+
+          <Controller
+            name="phoneNumber"
+            control={control}
+            rules={{ required: 'Phone Number is required' }}
+            render={({ field }) => (
+              <PhoneInputFieldV2
+                label="Phone Number *"
+                id="phoneNumber"
+                containerClass="h-[72px] flex-1"
+                error={errors?.phoneNumber}
+                // disableCountryCode={true}
+                {...field}
+              />
+            )}
           />
           <Input
             className="active:border-primary-100 focus:outline-primary-100"
@@ -119,7 +130,9 @@ const GeneralSettings = () => {
         <div className="my-5 2xl:my-8 grid grid-cols-[auto_auto] justify-between gap-x-3 md:gap-x-2 gap-y-5 xl:gap-y-5 md:w-fit 2xl:w-[55%]">
           <p className="font-medium">Admin Position</p>
           <p className="font-semibold text-sm text-center text-greyText2 bg-greyBg rounded-xl px-3 py-2">
-            {user?.USER_ROLE?.[0] || '-'}
+            {user?.USER_ROLE?.filter(
+              (role) => role?.toLocaleLowerCase() !== 'default'
+            )?.[0] || '-'}
           </p>
           <p className="font-medium">Password</p>
           <button

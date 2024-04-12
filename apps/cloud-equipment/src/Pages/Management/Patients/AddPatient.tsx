@@ -14,7 +14,7 @@ import {
   DatePicker,
   FileUpload,
   Select,
-  PhoneInputField,
+  PhoneInputFieldV2,
 } from '@cloud-equipment/ui-components';
 import { AddPatientModal } from '../../../Modals';
 import { IAppState } from '../../../Store/store';
@@ -170,8 +170,6 @@ const NewPatient = () => {
     return age;
   };
 
-  console.log('errors', errors);
-
   return (
     <>
       <Modal open={createPatientModalPromptIsOpen} onClose={onClose}>
@@ -233,29 +231,34 @@ const NewPatient = () => {
                 })}
                 error={errors?.patientEmail}
               />
-              {/* <Input
-                label="Mobile Number"
-                {...register('patientPhone', {
-                  required: 'Mobile Number is required ',
-                })}
-              /> */}
-              <PhoneInputField
-                control={control}
-                label="Mobile Number *"
+
+              <Controller
                 name="patientPhone"
-                containerClass="h-[74px]"
-                error={errors?.patientPhone}
+                control={control}
+                rules={{ required: 'Phone Number is required' }}
+                render={({ field }) => (
+                  <PhoneInputFieldV2
+                    label="Mobile Number *"
+                    id="patientPhone"
+                    containerClass="h-[72px]"
+                    error={errors?.patientPhone}
+                    // disableCountryCode={true}
+                    {...field}
+                  />
+                )}
               />
               <Controller
                 name="patientGenderId"
                 control={control}
-                defaultValue={0}
+                rules={{ required: 'Gender is required' }}
+                // defaultValue={0}
                 render={({ field }) => (
                   <Select
                     options={Gender}
                     label="Gender *"
                     placeholder="Select Gender"
                     containerClass="flex-1"
+                    error={errors?.patientGenderId}
                     {...{ field }}
                   />
                 )}
@@ -263,6 +266,7 @@ const NewPatient = () => {
               <Controller
                 name="dateOfBirth"
                 control={control}
+                rules={{ required: 'Date of Birth is required' }}
                 render={({ field: { onChange, value, ref } }) => (
                   <DatePicker
                     label="Date of Birth *"
@@ -271,6 +275,7 @@ const NewPatient = () => {
                     onAccept={onChange}
                     value={value}
                     inputRef={ref}
+                    error={errors?.dateOfBirth}
                   />
                 )}
               />
@@ -287,12 +292,14 @@ const NewPatient = () => {
               <Controller
                 name="maritalStatusId"
                 control={control}
-                defaultValue={0}
+                rules={{ required: 'Marital Status is required' }}
+                // defaultValue={0}
                 render={({ field }) => (
                   <Select
                     options={MaritalStatus}
                     label="Marital Status *"
                     placeholder="Select Marital Status"
+                    error={errors?.maritalStatusId}
                     {...{ field }}
                   />
                 )}
@@ -310,12 +317,14 @@ const NewPatient = () => {
               <Controller
                 name="paymentType"
                 control={control}
-                defaultValue={'0'}
+                rules={{ required: 'Payment Type is required' }}
+                // defaultValue={'0'}
                 render={({ field }) => (
                   <Select
                     options={PaymentMethod}
                     label="Payment Type *"
                     placeholder="Select Payment Type"
+                    error={errors?.paymentType}
                     {...{ field }}
                   />
                 )}
@@ -343,22 +352,33 @@ const NewPatient = () => {
                 })}
                 error={errors?.emergencyContactLastName}
               />
-              <Input
-                label="Contact Number *"
-                {...register('emergencyContactNumber', {
-                  required: 'Emergency Contact Number is required ',
-                })}
-                error={errors?.emergencyContactNumber}
+              <Controller
+                name="emergencyContactNumber"
+                control={control}
+                rules={{ required: 'Emergency Contact Number is required' }}
+                render={({ field }) => (
+                  <PhoneInputFieldV2
+                    label="Contact Number *"
+                    id="emergencyContactNumber"
+                    containerClass="h-[71px]"
+                    error={errors?.emergencyContactNumber}
+                    // disableCountryCode={true}
+                    {...field}
+                  />
+                )}
               />
+
               <Controller
                 name="emergencyContactRelationship"
                 control={control}
-                defaultValue={'0'}
+                rules={{ required: 'Relationship is required' }}
+                // defaultValue={'0'}
                 render={({ field }) => (
                   <Select
                     options={Relationship}
                     label="Relationship *"
                     placeholder="Select Relationship"
+                    error={errors?.emergencyContactRelationship}
                     {...{ field }}
                   />
                 )}
